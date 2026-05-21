@@ -272,7 +272,7 @@
 </div>
 
 <script>
-    // Expanded Database including real-world F1 locations, engines, and historical stats
+    // Database with exact original filenames (including spaces for Haas)
     const garageDatabase = {
         ferrari: {
             team: "Ferrari", modelName: "SF-24", logo: "logo ferrari.png", 
@@ -331,7 +331,6 @@
         }
     };
 
-    // Helper function to draw fake data bars for the telemetry UI
     function drawMiniChart(containerId, colorHex) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -348,20 +347,21 @@
 
     function selectCar(carKey, cardElement) {
         const carData = garageDatabase[carKey];
+        if (!carData) return;
 
-        // Identity & Branding
+        // Update team logo and names
         document.getElementById('team-logo').src = carData.logo;
         document.getElementById('panel-team-name').innerText = carData.team;
         document.getElementById('panel-car-model').innerText = carData.modelName;
 
-        // Load 3D Asset
+        // Load 3D model
         const viewer = document.getElementById('f1-viewer');
         if (viewer) viewer.setAttribute('src', carData.model);
 
-        // Change FULL PAGE background
+        // Full page background
         document.body.style.backgroundImage = `url('${carData.background}')`;
 
-        // Drivers Update
+        // Drivers
         document.getElementById('d1-num').innerText = carData.drivers.d1Num;
         document.getElementById('d1-num').style.color = carData.drivers.d1Color;
         document.getElementById('d1-name').innerText = carData.drivers.d1Name;
@@ -372,29 +372,29 @@
         document.getElementById('d2-name').innerText = carData.drivers.d2Name;
         document.getElementById('d2-img').src = carData.drivers.d2Img;
 
-        // Standings Update
+        // Standings
         document.getElementById('stand-pos').innerText = carData.standings.pos;
         document.getElementById('stand-pts').innerText = carData.standings.pts;
         document.getElementById('stand-wins').innerText = carData.standings.wins;
 
-        // Base & Tech Specs Update
+        // Base & Tech
         document.getElementById('team-flag').innerText = carData.flag;
         document.getElementById('team-base').innerText = carData.base;
         document.getElementById('team-engine').innerText = carData.engine;
         document.getElementById('team-chassis').innerText = carData.modelName;
 
-        // Rank Update
+        // Rank
         document.getElementById('rank-start').innerText = carData.rank.start;
         document.getElementById('rank-finish').innerText = carData.rank.finish;
 
-        // Draw Mini Charts
+        // Mini charts
         drawMiniChart('chart-start', carData.drivers.d1Color);
         drawMiniChart('chart-finish', '#e10600');
 
-        // Load Championships
+        // Championships
         const champContainer = document.getElementById('champ-years');
         champContainer.innerHTML = '';
-        if(carData.champs.length === 0) {
+        if (carData.champs.length === 0) {
             champContainer.innerHTML = '<span style="color:#666; font-size:10px;">No Recent Titles</span>';
         } else {
             carData.champs.forEach(year => {
@@ -405,26 +405,26 @@
             });
         }
 
-        // Diagnostic Progress Bars
+        // Diagnostics bars
         document.getElementById('bar-drag').style.width = carData.stats.drag + '%';
         document.getElementById('bar-speed').style.width = carData.stats.speed + '%';
         document.getElementById('bar-downforce').style.width = carData.stats.downforce + '%';
 
-        // Tyre Specs Update
+        // Tyre specs
         document.getElementById('pressure-front').innerText = carData.tyres.pFront;
         document.getElementById('pressure-rear').innerText = carData.tyres.pRear;
         document.getElementById('camber-front').innerText = carData.tyres.cFront;
         document.getElementById('camber-rear').innerText = carData.tyres.cRear;
 
-        // Carousel Highlighting
+        // Carousel active state
         document.querySelectorAll('.car-card').forEach(card => card.classList.remove('active'));
-        if(cardElement) cardElement.classList.add('active');
+        if (cardElement) cardElement.classList.add('active');
     }
 
-    // Auto-load Ferrari on page boot
+    // Load Ferrari by default
     window.onload = function() {
         const defaultCard = document.querySelector('.car-card');
-        if(defaultCard) selectCar('ferrari', defaultCard);
+        if (defaultCard) selectCar('ferrari', defaultCard);
     };
 </script>
 </body>
