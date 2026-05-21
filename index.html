@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lego F1 Garage - Smooth Transitions</title>
+    <title>Lego F1 Garage - No Haas, Transparent Car Cards</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
         /* General Layout Base */
         body {
             margin: 0;
             font-family: 'Arial Black', sans-serif;
-            background: #121212; /* fallback */
+            background: #121212;
             overflow-x: hidden;
             position: relative;
         }
@@ -72,7 +72,6 @@
         .side-panel::-webkit-scrollbar-track { background: transparent; }
         .side-panel::-webkit-scrollbar-thumb { background-color: #444; border-radius: 10px; }
 
-        /* Fade helper class */
         .fade-out {
             opacity: 0 !important;
         }
@@ -118,7 +117,7 @@
         .stat-bar-container { background-color: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 3px; }
         .stat-bar-fill { background: linear-gradient(90deg, #ffcc00, #e10600); height: 100%; width: 0%; transition: width 0.5s ease; }
 
-        /* Center Scene Canvas - smooth model transitions */
+        /* Center Scene Canvas */
         model-viewer {
             flex-grow: 1;
             height: 100%;
@@ -141,22 +140,34 @@
         .camber-box.front { transform: skewX(-5deg); }
         .camber-box.rear { transform: skewX(-2deg); }
 
-        /* Bottom Carousel */
+        /* Bottom Carousel - Transparent cards, no black box */
         .carousel-container {
             background-color: rgba(21, 21, 21, 0.85);
             padding: 15px;
             text-align: center;
             margin-top: 20px;
             backdrop-filter: blur(2px);
-            transition: all 0.2s;
         }
         .carousel-title { font-size: 13px; color: #ddd; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
         .carousel { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        .car-card { background-color: #222; border: 2px solid #333; border-radius: 8px; padding: 8px; cursor: pointer; width: 140px; text-align: center; transition: transform 0.2s, border-color 0.2s, background 0.2s; }
-        .car-card:hover { transform: translateY(-3px); border-color: #ffcc00; }
-        .car-card.active { border-color: #e10600; background-color: #2a1010; }
-        .car-card img { width: 100%; height: auto; transition: opacity 0.2s; }
-        .car-card p { margin: 6px 0 0 0; font-size: 10px; font-family: 'Arial Black', sans-serif; }
+        /* Removed black background and border from car cards */
+        .car-card {
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            width: 140px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .car-card:hover { transform: translateY(-3px); }
+        .car-card.active {
+            /* No background change, just a subtle glow or underline if desired */
+            text-shadow: 0 0 5px rgba(225,6,0,0.5);
+        }
+        .car-card img { width: 100%; height: auto; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+        .car-card p { margin: 6px 0 0 0; font-size: 10px; font-family: 'Arial Black', sans-serif; color: white; }
     </style>
 </head>
 <body>
@@ -297,7 +308,7 @@
         </div>
     </div>
 
-    <!-- BOTTOM CAROUSEL -->
+    <!-- BOTTOM CAROUSEL - Haas removed -->
     <div class="carousel-container">
         <div class="carousel-title">Giada Farid's Exclusive Lego® F1® Collection</div>
         <div class="carousel">
@@ -305,12 +316,12 @@
             <div class="car-card" data-car="aston" onclick="selectCar('aston', this)"><img src="aston martin car.png" alt="Aston"><p>Aston Martin</p></div>
             <div class="car-card" data-car="mercedes" onclick="selectCar('mercedes', this)"><img src="mercedes car.png" alt="Merc"><p>Mercedes-Benz</p></div>
             <div class="car-card" data-car="mclaren" onclick="selectCar('mclaren', this)"><img src="mclaren car.png" alt="Mac"><p>McLaren</p></div>
-            <div class="car-card" data-car="haas" onclick="selectCar('haas', this)"><img src="haas vr-20.png" alt="Haas"><p>Haas VR-20</p></div>
+            <!-- Haas card removed -->
         </div>
     </div>
 
     <script>
-        // Database with exact original filenames (including spaces for Haas)
+        // Database with all cars except Haas (but keeping Haas data for completeness, though not used)
         const garageDatabase = {
             ferrari: {
                 team: "Ferrari", modelName: "SF-24", logo: "logo ferrari.png", 
@@ -355,17 +366,6 @@
                 standings: { pos: "1", pts: "240", wins: "6" },
                 drivers: { d1Num: "4", d1Name: "Norris", d1Img: "driver norris.png", d1Color: "#ff8000", d2Num: "81", d2Name: "Piastri", d2Img: "driver piastri.png", d2Color: "#ffffff" },
                 tyres: { pFront: "24.5 psi", pRear: "22.5 psi", cFront: "-2.80°", cRear: "-1.60°" }
-            },
-            haas: {
-                team: "Haas", modelName: "VF-24", logo: "logo haas vr-20.png", 
-                model: "3d haas vr-20.glb", background: "background haas vr-20.png",
-                base: "Kannapolis, USA", flag: "🇺🇸", engine: "Ferrari v6",
-                rank: { start: "14.50", finish: "15.20" },
-                champs: [],
-                stats: { drag: 51, speed: 80, downforce: 75 },
-                standings: { pos: "7", pts: "32", wins: "0" },
-                drivers: { d1Num: "27", d1Name: "Hulkenberg", d1Img: "driver hulkenberg.png", d1Color: "#ef1b24", d2Num: "20", d2Name: "Magnussen", d2Img: "driver magnussen.png", d2Color: "#ffffff" },
-                tyres: { pFront: "23.5 psi", pRear: "21.0 psi", cFront: "-3.15°", cRear: "-1.90°" }
             }
         };
 
@@ -386,12 +386,10 @@
         }
 
         function updateCarUI(carData) {
-            // Update team logo and names
             document.getElementById('team-logo').src = carData.logo;
             document.getElementById('panel-team-name').innerText = carData.team;
             document.getElementById('panel-car-model').innerText = carData.modelName;
 
-            // Drivers
             document.getElementById('d1-num').innerText = carData.drivers.d1Num;
             document.getElementById('d1-num').style.color = carData.drivers.d1Color;
             document.getElementById('d1-name').innerText = carData.drivers.d1Name;
@@ -402,26 +400,21 @@
             document.getElementById('d2-name').innerText = carData.drivers.d2Name;
             document.getElementById('d2-img').src = carData.drivers.d2Img;
 
-            // Standings
             document.getElementById('stand-pos').innerText = carData.standings.pos;
             document.getElementById('stand-pts').innerText = carData.standings.pts;
             document.getElementById('stand-wins').innerText = carData.standings.wins;
 
-            // Base & Tech
             document.getElementById('team-flag').innerText = carData.flag;
             document.getElementById('team-base').innerText = carData.base;
             document.getElementById('team-engine').innerText = carData.engine;
             document.getElementById('team-chassis').innerText = carData.modelName;
 
-            // Rank
             document.getElementById('rank-start').innerText = carData.rank.start;
             document.getElementById('rank-finish').innerText = carData.rank.finish;
 
-            // Mini charts
             drawMiniChart('chart-start', carData.drivers.d1Color);
             drawMiniChart('chart-finish', '#e10600');
 
-            // Championships
             const champContainer = document.getElementById('champ-years');
             champContainer.innerHTML = '';
             if (carData.champs.length === 0) {
@@ -435,12 +428,10 @@
                 });
             }
 
-            // Diagnostics bars
             document.getElementById('bar-drag').style.width = carData.stats.drag + '%';
             document.getElementById('bar-speed').style.width = carData.stats.speed + '%';
             document.getElementById('bar-downforce').style.width = carData.stats.downforce + '%';
 
-            // Tyre specs
             document.getElementById('pressure-front').innerText = carData.tyres.pFront;
             document.getElementById('pressure-rear').innerText = carData.tyres.pRear;
             document.getElementById('camber-front').innerText = carData.tyres.cFront;
@@ -449,11 +440,9 @@
 
         function setBackground(imageUrl) {
             const bgOverlay = document.getElementById('bg-overlay');
-            // Fade out current background
             bgOverlay.style.opacity = '0';
             setTimeout(() => {
                 bgOverlay.style.backgroundImage = `url('${imageUrl}')`;
-                // Force a small delay then fade in
                 setTimeout(() => {
                     bgOverlay.style.opacity = '1';
                 }, 20);
@@ -467,7 +456,6 @@
 
             isTransitioning = true;
             
-            // Fade out panels and model viewer
             const leftPanel = document.getElementById('left-panel');
             const rightPanel = document.getElementById('right-panel');
             const modelViewer = document.getElementById('f1-viewer');
@@ -476,24 +464,17 @@
             rightPanel.classList.add('fade-out');
             modelViewer.classList.add('fade-out');
             
-            // Change background with crossfade
             setBackground(carData.background);
             
-            // Wait for fade out then update content and model
             setTimeout(() => {
-                // Update all text/images (except model src)
                 updateCarUI(carData);
-                
-                // Change 3D model src (this will trigger loading)
                 modelViewer.setAttribute('src', carData.model);
                 
-                // Wait a tiny bit for model to start loading, then fade in
                 setTimeout(() => {
                     leftPanel.classList.remove('fade-out');
                     rightPanel.classList.remove('fade-out');
                     modelViewer.classList.remove('fade-out');
                     
-                    // Carousel active state
                     document.querySelectorAll('.car-card').forEach(card => card.classList.remove('active'));
                     if (cardElement) cardElement.classList.add('active');
                     
@@ -502,7 +483,6 @@
             }, 300);
         }
 
-        // Set initial background
         window.onload = function() {
             const bgOverlay = document.getElementById('bg-overlay');
             bgOverlay.style.backgroundImage = "url('background ferrari.png')";
@@ -513,7 +493,6 @@
             
             const defaultCard = document.querySelector('.car-card');
             if (defaultCard) {
-                // Directly set UI without fade for first load
                 const ferrariData = garageDatabase.ferrari;
                 updateCarUI(ferrariData);
                 document.getElementById('f1-viewer').setAttribute('src', ferrariData.model);
