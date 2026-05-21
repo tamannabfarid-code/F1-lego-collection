@@ -7,10 +7,27 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
         /* General Layout Base */
-        body { margin: 0; font-family: 'Arial Black', sans-serif; background-color: #121212; color: white; overflow-x: hidden; }
+        body {
+            margin: 0;
+            font-family: 'Arial Black', sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+            color: white;
+            overflow-x: hidden;
+        }
 
         /* Dashboard Viewport Columns */
-        .main-stage { position: relative; height: 65vh; background-size: cover; background-position: center; transition: background 0.5s ease-in-out; display: flex; justify-content: space-between; align-items: stretch; padding: 20px; gap: 15px; }
+        .main-stage {
+            position: relative;
+            height: 65vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            padding: 20px;
+            gap: 15px;
+        }
 
         /* Unified Card Panels */
         .side-panel {
@@ -90,9 +107,15 @@
         .camber-box.rear { transform: skewX(-2deg); }
 
         /* Bottom Carousel */
-        .carousel-container { background-color: #151515; padding: 15px; text-align: center; }
-        .carousel-title { font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
-        .carousel { display: flex; justify-content: center; gap: 12px; }
+        .carousel-container {
+            background-color: rgba(21, 21, 21, 0.85);
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            backdrop-filter: blur(2px);
+        }
+        .carousel-title { font-size: 13px; color: #ddd; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+        .carousel { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
         .car-card { background-color: #222; border: 2px solid #333; border-radius: 8px; padding: 8px; cursor: pointer; width: 140px; text-align: center; transition: transform 0.2s; }
         .car-card:hover { transform: translateY(-3px); border-color: #ffcc00; }
         .car-card.active { border-color: #e10600; background-color: #2a1010; }
@@ -217,7 +240,7 @@
             </div>
         </div>
 
-        <!-- Car Diagnostics Widget (now on the right) -->
+        <!-- Car Diagnostics Widget -->
         <div class="widget-title">Car Diagnostics</div>
         <div class="sub-block">
             <div class="stat-row">
@@ -331,11 +354,12 @@
         document.getElementById('panel-team-name').innerText = carData.team;
         document.getElementById('panel-car-model').innerText = carData.modelName;
 
-        // Load 3D Asset & Background
+        // Load 3D Asset
         const viewer = document.getElementById('f1-viewer');
         if (viewer) viewer.setAttribute('src', carData.model);
-        // Change background image (saved as background ferrari.png etc.)
-        document.getElementById('main-stage').style.backgroundImage = `url('${carData.background}')`;
+
+        // Change FULL PAGE background (body, not just main-stage)
+        document.body.style.backgroundImage = `url('${carData.background}')`;
 
         // Drivers Update
         document.getElementById('d1-num').innerText = carData.drivers.d1Num;
