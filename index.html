@@ -4,166 +4,404 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lego F1 Garage</title>
-    
-    <link rel="stylesheet" href="style.css">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        /* General Layout Base */
+        body { margin: 0; font-family: 'Arial Black', sans-serif; background-color: #121212; color: white; overflow-x: hidden; }
+
+        /* Dashboard Viewport Columns */
+        .main-stage { position: relative; height: 65vh; background-size: cover; background-position: center; transition: background 0.5s ease-in-out; display: flex; justify-content: space-between; align-items: stretch; padding: 20px; gap: 15px; }
+
+        /* Unified Card Panels */
+        .side-panel {
+            background-color: rgba(18, 18, 18, 0.9);
+            padding: 15px;
+            border-radius: 14px;
+            width: 280px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.7);
+            border: 1px solid #2b2b2b;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .side-panel::-webkit-scrollbar { width: 6px; }
+        .side-panel::-webkit-scrollbar-track { background: transparent; }
+        .side-panel::-webkit-scrollbar-thumb { background-color: #444; border-radius: 10px; }
+
+        .widget-title { font-family: 'Arial Black', sans-serif; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+        .sub-block { background-color: rgba(30, 30, 30, 0.6); border-radius: 10px; padding: 10px; border: 1px solid #333; }
+
+        /* Team Header Widget */
+        .team-header { display: flex; align-items: center; gap: 12px; }
+        .team-logo { width: 35px; height: 35px; object-fit: contain; }
+        .team-info h3 { margin: 0; font-family: 'Arial Black', sans-serif; font-size: 16px; }
+        .team-info p { margin: 0; font-size: 12px; color: #ffcc00; }
+
+        /* Drivers Row Widget */
+        .drivers-container { display: flex; gap: 10px; }
+        .driver-card { flex: 1; background-color: #222; border-radius: 8px; padding: 6px; position: relative; display: flex; flex-direction: column; align-items: flex-start; border: 1px solid #333; }
+        .driver-num { font-family: 'Arial Black', sans-serif; font-size: 20px; font-style: italic; line-height: 1; margin-bottom: 2px; }
+        .driver-name { font-size: 11px; font-weight: bold; color: #bbb; }
+        .driver-avatar { width: 45px; height: 45px; object-fit: contain; position: absolute; right: 2px; bottom: 2px; }
+
+        /* Standings Widget */
+        .standings-grid { display: flex; justify-content: space-between; align-items: center; text-align: center; }
+        .standings-item span { font-family: 'Arial Black', sans-serif; font-size: 24px; }
+
+        /* Tech & Base Specs */
+        .tech-specs-grid { display: flex; gap: 10px; }
+        .spec-item { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+
+        /* Rank & Telemetry Charts */
+        .rank-row { display: flex; align-items: center; gap: 10px; }
+        .rank-num { font-size: 22px; font-family: 'Arial Black', sans-serif; }
+        .rank-text { font-size: 10px; color: #aaa; line-height: 1.2; text-transform: uppercase; }
+        .mini-chart { display: flex; gap: 3px; height: 25px; align-items: flex-end; margin-top: 8px; }
+        .chart-bar { flex: 1; background-color: #444; border-radius: 2px 2px 0 0; transition: height 0.3s ease; }
+
+        /* Championship Shields */
+        .champ-icons { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .champ-badge { background-color: #222; border: 1px solid #444; border-radius: 4px; padding: 4px 6px; font-size: 9px; color: #ffcc00; display: flex; align-items: center; gap: 4px; }
+
+        /* Performance Bar Items */
+        .stat-row { margin-bottom: 6px; }
+        .stat-label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; }
+        .stat-bar-container { background-color: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 3px; }
+        .stat-bar-fill { background: linear-gradient(90deg, #ffcc00, #e10600); height: 100%; width: 0%; transition: width 0.5s ease; }
+
+        /* Center Scene Canvas */
+        model-viewer { flex-grow: 1; height: 100%; outline: none; }
+
+        /* Right Tyre Widget Styles */
+        .tyre-compounds { display: flex; justify-content: space-around; text-align: center; }
+        .tyre-graphic { width: 28px; height: 28px; border-radius: 50%; background-color: #111; margin: 0 auto 4px auto; border: 4px solid #333; box-sizing: border-box; }
+        .tyre-graphic.hard { border-color: #ffffff; box-shadow: 0 0 4px #fff; }
+        .tyre-graphic.medium { border-color: #ffd200; box-shadow: 0 0 4px #ffd200; }
+        .tyre-graphic.soft { border-color: #ff0022; box-shadow: 0 0 4px #ff0022; }
+        .spec-row { display: flex; justify-content: space-around; text-align: center; }
+        .spec-val { font-size: 15px; font-weight: bold; }
+        .spec-sub { font-size: 9px; color: #666; text-transform: uppercase; }
+        .camber-box { width: 26px; height: 34px; border: 2px solid #555; margin: 0 auto 4px auto; border-radius: 3px; position: relative; }
+        .camber-box::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background-color: #e10600; }
+        .camber-box.front { transform: skewX(-5deg); }
+        .camber-box.rear { transform: skewX(-2deg); }
+
+        /* Bottom Carousel */
+        .carousel-container { background-color: #151515; padding: 15px; text-align: center; }
+        .carousel-title { font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+        .carousel { display: flex; justify-content: center; gap: 12px; }
+        .car-card { background-color: #222; border: 2px solid #333; border-radius: 8px; padding: 8px; cursor: pointer; width: 140px; text-align: center; transition: transform 0.2s; }
+        .car-card:hover { transform: translateY(-3px); border-color: #ffcc00; }
+        .car-card.active { border-color: #e10600; background-color: #2a1010; }
+        .car-card img { width: 100%; height: auto; }
+        .car-card p { margin: 6px 0 0 0; font-size: 10px; font-family: 'Arial Black', sans-serif; }
+    </style>
 </head>
 <body>
-        <div class="stats-currency">
-            <div><span style="color: #ffcc00;">39,000</span> LEGO BRICKS</div>
-            <div><span style="color: #ffcc00;">6,920</span> PREMIER SETS</div>
+
+<div class="main-stage" id="main-stage">
+    
+    <!-- LEFT PANEL -->
+    <div class="side-panel">
+        <div class="sub-block team-header">
+            <img id="team-logo" src="logo ferrari.png" alt="Brand" class="team-logo">
+            <div class="team-info">
+                <h3 id="panel-team-name">Ferrari</h3>
+                <p id="panel-car-model">SF-24</p>
+            </div>
+        </div>
+
+        <div class="widget-title">Team Drivers</div>
+        <div class="drivers-container">
+            <div class="driver-card">
+                <div id="d1-num" class="driver-num" style="color: #e10600;">16</div>
+                <div id="d1-name" class="driver-name">Leclerc</div>
+                <img id="d1-img" src="driver leclerc.png" alt="Driver" class="driver-avatar">
+            </div>
+            <div class="driver-card">
+                <div id="d2-num" class="driver-num" style="color: #ffcc00;">55</div>
+                <div id="d2-name" class="driver-name">Sainz</div>
+                <img id="d2-img" src="driver sainz.png" alt="Driver" class="driver-avatar">
+            </div>
+        </div>
+
+        <div class="widget-title">Standings Info</div>
+        <div class="sub-block standings-grid">
+            <div class="standings-item">
+                <div class="stat-label">Position</div>
+                <div><span id="stand-pos">2</span><small style="font-size:12px; color:#aaa;">nd</small></div>
+            </div>
+            <div class="standings-item">
+                <div class="stat-label">Total Points</div>
+                <div><span id="stand-pts">200</span><small style="font-size:10px; color:#aaa;"> pts</small></div>
+            </div>
+            <div class="standings-item">
+                <div class="stat-label">Wins</div>
+                <div><span id="stand-wins" style="color: #ffcc00;">4</span></div>
+            </div>
+        </div>
+
+        <div class="sub-block base-info">
+            <div class="stat-label" style="margin-bottom: 4px;">📍 Base</div>
+            <div style="font-size: 14px; font-family: 'Arial Black', sans-serif;">
+                <span id="team-flag">🇮🇹</span> <span id="team-base">Maranello, Italy</span>
+            </div>
+        </div>
+
+        <div class="tech-specs-grid">
+            <div class="sub-block spec-item">
+                <div class="stat-label">Engine</div>
+                <div id="team-engine" style="font-style: italic; font-size: 13px; margin-top: 4px;">Ferrari v6</div>
+            </div>
+            <div class="sub-block spec-item">
+                <div class="stat-label">Chassis</div>
+                <div id="team-chassis" style="font-style: italic; font-size: 13px; margin-top: 4px;">SF-24</div>
+            </div>
+        </div>
+
+        <div class="sub-block rank-widget">
+            <div class="widget-title" style="color: #fff; font-size: 14px;">Rank</div>
+            <div class="rank-row">
+                <div class="rank-num" id="rank-start">5.15</div>
+                <div class="rank-text">Starting grid<br>avg</div>
+            </div>
+            <div class="mini-chart" id="chart-start"></div>
+            <div class="rank-row" style="margin-top: 15px;">
+                <div class="rank-num" id="rank-finish">4.21</div>
+                <div class="rank-text">Finish line<br>avg</div>
+            </div>
+            <div class="mini-chart" id="chart-finish"></div>
+        </div>
+
+        <div class="sub-block champ-widget">
+            <div class="stat-label">Ranked in World Championship</div>
+            <div class="champ-icons" id="champ-years"></div>
         </div>
     </div>
 
-    <div class="main-stage" id="main-stage">
-        
-        <div class="side-panel">
-            
-            <div class="sub-block team-header">
-                <img id="team-logo" src="logo ferrari.png" alt="Brand" class="team-logo">
-                <div class="team-info">
-                    <h3 id="panel-team-name">Ferrari</h3>
-                    <p id="panel-car-model">SF-24</p>
-                </div>
-            </div>
+    <!-- 3D MODEL VIEWER -->
+    <model-viewer id="f1-viewer" 
+                  src="3d ferrari.glb" 
+                  camera-controls 
+                  auto-rotate 
+                  rotation-per-second="30deg"
+                  shadow-intensity="1">
+    </model-viewer>
 
-            <div class="widget-title">Team Drivers</div>
-            <div class="drivers-container">
-                <div class="driver-card">
-                    <div id="d1-num" class="driver-num" style="color: #e10600;">16</div>
-                    <div id="d1-name" class="driver-name">Leclerc</div>
-                    <img id="d1-img" src="driver leclerc.png" alt="Driver" class="driver-avatar">
-                </div>
-                <div class="driver-card">
-                    <div id="d2-num" class="driver-num" style="color: #ffcc00;">55</div>
-                    <div id="d2-name" class="driver-name">Sainz</div>
-                    <img id="d2-img" src="driver sainz.png" alt="Driver" class="driver-avatar">
-                </div>
-            </div>
-
-            <div class="widget-title">Standings Info</div>
-            <div class="sub-block standings-grid">
-                <div class="standings-item">
-                    <div class="stat-label">Position</div>
-                    <div><span id="stand-pos">2</span><small style="font-size:12px; color:#aaa;">nd</small></div>
-                </div>
-                <div class="standings-item">
-                    <div class="stat-label">Total Points</div>
-                    <div><span id="stand-pts">200</span><small style="font-size:10px; color:#aaa;"> pts</small></div>
-                </div>
-                <div class="standings-item">
-                    <div class="stat-label">Wins</div>
-                    <div><span id="stand-wins" style="color: #ffcc00;">4</span></div>
-                </div>
-            </div>
-
-            <div class="sub-block base-info">
-                <div class="stat-label" style="margin-bottom: 4px;">📍 Base</div>
-                <div style="font-size: 14px; font-family: 'Arial Black', sans-serif;">
-                    <span id="team-flag">🇮🇹</span> <span id="team-base">Maranello, Italy</span>
-                </div>
-            </div>
-
-            <div class="tech-specs-grid">
-                <div class="sub-block spec-item">
-                    <div class="stat-label">Engine</div>
-                    <div id="team-engine" style="font-style: italic; font-size: 13px; margin-top: 4px;">Ferrari v6</div>
-                </div>
-                <div class="sub-block spec-item">
-                    <div class="stat-label">Chassis</div>
-                    <div id="team-chassis" style="font-style: italic; font-size: 13px; margin-top: 4px;">SF-24</div>
-                </div>
-            </div>
-
-            <div class="sub-block rank-widget">
-                <div class="widget-title" style="color: #fff; font-size: 14px;">Rank</div>
-                
-                <div class="rank-row">
-                    <div class="rank-num" id="rank-start">5.15</div>
-                    <div class="rank-text">Starting grid<br>avg</div>
-                </div>
-                <div class="mini-chart" id="chart-start"></div>
-
-                <div class="rank-row" style="margin-top: 15px;">
-                    <div class="rank-num" id="rank-finish">4.21</div>
-                    <div class="rank-text">Finish line<br>avg</div>
-                </div>
-                <div class="mini-chart" id="chart-finish"></div>
-            </div>
-
-            <div class="sub-block champ-widget">
-                <div class="stat-label">Ranked in World Championship</div>
-                <div class="champ-icons" id="champ-years">
-                    </div>
-            </div>
-
-            <div class="widget-title">Car Diagnostics</div>
-            <div class="sub-block">
-                <div class="stat-row">
-                    <div class="stat-label">Drag</div>
-                    <div class="stat-bar-container"><div id="bar-drag" class="stat-bar-fill"></div></div>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-label">Max Speed</div>
-                    <div class="stat-bar-container"><div id="bar-speed" class="stat-bar-fill"></div></div>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-label">Downforce</div>
-                    <div class="stat-bar-container"><div id="bar-downforce" class="stat-bar-fill"></div></div>
-                </div>
-            </div>
-
+    <!-- RIGHT PANEL (Tyres + Car Diagnostics) -->
+    <div class="side-panel">
+        <div class="widget-title">Current Tyre Info</div>
+        <div class="sub-block tyre-compounds">
+            <div><div class="tyre-graphic hard"></div><span style="font-size:11px;">C1 HARD</span></div>
+            <div><div class="tyre-graphic medium"></div><span style="font-size:11px; color:#ffd200;">C2 MED</span></div>
+            <div><div class="tyre-graphic soft"></div><span style="font-size:11px; color:#ff0022;">C3 SOFT</span></div>
         </div>
 
-        <model-viewer id="f1-viewer" 
-                      src="3d ferrari.glb" 
-                      camera-controls 
-                      auto-rotate 
-                      rotation-per-second="30deg"
-                      shadow-intensity="1">
-        </model-viewer>
-
-        <div class="side-panel">
-            <div class="widget-title">Current Tyre Info</div>
-            
-            <div class="sub-block tyre-compounds">
-                <div><div class="tyre-graphic hard"></div><span style="font-size:11px;">C1 HARD</span></div>
-                <div><div class="tyre-graphic medium"></div><span style="font-size:11px; color:#ffd200;">C2 MED</span></div>
-                <div><div class="tyre-graphic soft"></div><span style="font-size:11px; color:#ff0022;">C3 SOFT</span></div>
-            </div>
-
-            <div class="widget-title">Tyre Specs (Slick)</div>
-            
-            <div class="sub-block">
-                <div class="stat-label" style="margin-bottom:6px;">Min. Starting Pressures</div>
-                <div class="spec-row">
-                    <div><div id="pressure-front" class="spec-val">25.0 psi</div><div class="spec-sub">Front</div></div>
-                    <div><div id="pressure-rear" class="spec-val">23.0 psi</div><div class="spec-sub">Rear</div></div>
-                </div>
-            </div>
-
-            <div class="sub-block">
-                <div class="stat-label" style="margin-bottom:6px;">EOS Camber Limit</div>
-                <div class="spec-row">
-                    <div><div class="camber-box front"></div><div id="camber-front" class="spec-val" style="font-size:13px;">-2.75°</div><div class="spec-sub">Front</div></div>
-                    <div><div class="camber-box rear"></div><div id="camber-rear" class="spec-val" style="font-size:13px;">-1.50°</div><div class="spec-sub">Rear</div></div>
-                </div>
+        <div class="widget-title">Tyre Specs (Slick)</div>
+        <div class="sub-block">
+            <div class="stat-label" style="margin-bottom:6px;">Min. Starting Pressures</div>
+            <div class="spec-row">
+                <div><div id="pressure-front" class="spec-val">25.0 psi</div><div class="spec-sub">Front</div></div>
+                <div><div id="pressure-rear" class="spec-val">23.0 psi</div><div class="spec-sub">Rear</div></div>
             </div>
         </div>
 
-    </div>
+        <div class="sub-block">
+            <div class="stat-label" style="margin-bottom:6px;">EOS Camber Limit</div>
+            <div class="spec-row">
+                <div><div class="camber-box front"></div><div id="camber-front" class="spec-val" style="font-size:13px;">-2.75°</div><div class="spec-sub">Front</div></div>
+                <div><div class="camber-box rear"></div><div id="camber-rear" class="spec-val" style="font-size:13px;">-1.50°</div><div class="spec-sub">Rear</div></div>
+            </div>
+        </div>
 
-    <div class="carousel-container">
-        <div class="carousel-title">Giada Farid's Exclusive Lego® F1® Collection</div>
-        <div class="carousel">
-            <div class="car-card active" onclick="selectCar('ferrari', this)"><img src="ferrari car.png" alt="Ferrari"><p>Ferrari F1-75</p></div>
-            <div class="car-card" onclick="selectCar('aston', this)"><img src="aston martin car.png" alt="Aston"><p>Aston Martin</p></div>
-            <div class="car-card" onclick="selectCar('mercedes', this)"><img src="mercedes car.png" alt="Merc"><p>Mercedes-Benz</p></div>
-            <div class="car-card" onclick="selectCar('mclaren', this)"><img src="mclaren car.png" alt="Mac"><p>McLaren</p></div>
-            <div class="car-card" onclick="selectCar('haas', this)"><img src="haas vr-20.png" alt="Haas"><p>Haas VR-20</p></div>
+        <!-- Car Diagnostics Widget (now on the right) -->
+        <div class="widget-title">Car Diagnostics</div>
+        <div class="sub-block">
+            <div class="stat-row">
+                <div class="stat-label">Drag</div>
+                <div class="stat-bar-container"><div id="bar-drag" class="stat-bar-fill"></div></div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-label">Max Speed</div>
+                <div class="stat-bar-container"><div id="bar-speed" class="stat-bar-fill"></div></div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-label">Downforce</div>
+                <div class="stat-bar-container"><div id="bar-downforce" class="stat-bar-fill"></div></div>
+            </div>
         </div>
     </div>
+</div>
 
-    <script src="script.js"></script>
+<!-- BOTTOM CAROUSEL -->
+<div class="carousel-container">
+    <div class="carousel-title">Giada Farid's Exclusive Lego® F1® Collection</div>
+    <div class="carousel">
+        <div class="car-card active" onclick="selectCar('ferrari', this)"><img src="ferrari car.png" alt="Ferrari"><p>Ferrari F1-75</p></div>
+        <div class="car-card" onclick="selectCar('aston', this)"><img src="aston martin car.png" alt="Aston"><p>Aston Martin</p></div>
+        <div class="car-card" onclick="selectCar('mercedes', this)"><img src="mercedes car.png" alt="Merc"><p>Mercedes-Benz</p></div>
+        <div class="car-card" onclick="selectCar('mclaren', this)"><img src="mclaren car.png" alt="Mac"><p>McLaren</p></div>
+        <div class="car-card" onclick="selectCar('haas', this)"><img src="haas vr-20.png" alt="Haas"><p>Haas VR-20</p></div>
+    </div>
+</div>
+
+<script>
+    // Expanded Database including real-world F1 locations, engines, and historical stats
+    const garageDatabase = {
+        ferrari: {
+            team: "Ferrari", modelName: "SF-24", logo: "logo ferrari.png", 
+            model: "3d ferrari.glb", background: "background ferrari.png",
+            base: "Maranello, Italy", flag: "🇮🇹", engine: "Ferrari v6",
+            rank: { start: "5.15", finish: "4.21" },
+            champs: ["2008", "2007", "2004", "2003", "2002", "2001", "2000", "1999"],
+            stats: { drag: 32, speed: 98, downforce: 92 },
+            standings: { pos: "2", pts: "200", wins: "4" },
+            drivers: { d1Num: "16", d1Name: "Leclerc", d1Img: "driver leclerc.png", d1Color: "#e10600", d2Num: "55", d2Name: "Sainz", d2Img: "driver sainz.png", d2Color: "#ffcc00" },
+            tyres: { pFront: "25.0 psi", pRear: "23.0 psi", cFront: "-2.75°", cRear: "-1.50°" }
+        },
+        aston: {
+            team: "Aston Martin", modelName: "AMR23", logo: "logo aston martin.png", 
+            model: "3d aston martin.glb", background: "background aston martin.png",
+            base: "Silverstone, UK", flag: "🇬🇧", engine: "Mercedes v6",
+            rank: { start: "8.50", finish: "9.10" },
+            champs: [],
+            stats: { drag: 45, speed: 85, downforce: 90 },
+            standings: { pos: "5", pts: "110", wins: "0" },
+            drivers: { d1Num: "14", d1Name: "Alonso", d1Img: "driver alonso.png", d1Color: "#006f62", d2Num: "18", d2Name: "Stroll", d2Img: "driver stroll.png", d2Color: "#ffffff" },
+            tyres: { pFront: "24.0 psi", pRear: "22.0 psi", cFront: "-3.00°", cRear: "-1.75°" }
+        },
+        mercedes: {
+            team: "Mercedes", modelName: "W12", logo: "logo mercedes.png", 
+            model: "3d mercedes.glb", background: "background mercedes.png",
+            base: "Brackley, UK", flag: "🇬🇧", engine: "Mercedes v6",
+            rank: { start: "4.10", finish: "3.80" },
+            champs: ["2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014"],
+            stats: { drag: 30, speed: 99, downforce: 95 },
+            standings: { pos: "3", pts: "175", wins: "2" },
+            drivers: { d1Num: "63", d1Name: "Russell", d1Img: "driver russell.png", d1Color: "#00d2be", d2Num: "44", d2Name: "Hamilton", d2Img: "driver hamilton.png", d2Color: "#ff007f" },
+            tyres: { pFront: "25.5 psi", pRear: "23.5 psi", cFront: "-2.50°", cRear: "-1.40°" }
+        },
+        mclaren: {
+            team: "McLaren", modelName: "MCL60", logo: "logo mclaren.png", 
+            model: "3d mclaren.glb", background: "background mclaren.png",
+            base: "Woking, UK", flag: "🇬🇧", engine: "Mercedes v6",
+            rank: { start: "3.20", finish: "2.90" },
+            champs: ["2008", "1999", "1998", "1991", "1990", "1989", "1988", "1985"],
+            stats: { drag: 36, speed: 92, downforce: 89 },
+            standings: { pos: "1", pts: "240", wins: "6" },
+            drivers: { d1Num: "4", d1Name: "Norris", d1Img: "driver norris.png", d1Color: "#ff8000", d2Num: "81", d2Name: "Piastri", d2Img: "driver piastri.png", d2Color: "#ffffff" },
+            tyres: { pFront: "24.5 psi", pRear: "22.5 psi", cFront: "-2.80°", cRear: "-1.60°" }
+        },
+        haas: {
+            team: "Haas", modelName: "VF-24", logo: "logo haas vr-20.png", 
+            model: "3d haas vr-20.glb", background: "background haas vr-20.png",
+            base: "Kannapolis, USA", flag: "🇺🇸", engine: "Ferrari v6",
+            rank: { start: "14.50", finish: "15.20" },
+            champs: [],
+            stats: { drag: 51, speed: 80, downforce: 75 },
+            standings: { pos: "7", pts: "32", wins: "0" },
+            drivers: { d1Num: "27", d1Name: "Hulkenberg", d1Img: "driver hulkenberg.png", d1Color: "#ef1b24", d2Num: "20", d2Name: "Magnussen", d2Img: "driver magnussen.png", d2Color: "#ffffff" },
+            tyres: { pFront: "23.5 psi", pRear: "21.0 psi", cFront: "-3.15°", cRear: "-1.90°" }
+        }
+    };
+
+    // Helper function to draw fake data bars for the telemetry UI
+    function drawMiniChart(containerId, colorHex) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        for(let i = 0; i < 15; i++) {
+            let height = Math.floor(Math.random() * 80) + 20;
+            let bar = document.createElement('div');
+            bar.className = 'chart-bar';
+            bar.style.height = height + '%';
+            bar.style.backgroundColor = colorHex;
+            container.appendChild(bar);
+        }
+    }
+
+    function selectCar(carKey, cardElement) {
+        const carData = garageDatabase[carKey];
+
+        // Identity & Branding
+        document.getElementById('team-logo').src = carData.logo;
+        document.getElementById('panel-team-name').innerText = carData.team;
+        document.getElementById('panel-car-model').innerText = carData.modelName;
+
+        // Load 3D Asset & Background
+        const viewer = document.getElementById('f1-viewer');
+        if (viewer) viewer.setAttribute('src', carData.model);
+        // Change background image (saved as background ferrari.png etc.)
+        document.getElementById('main-stage').style.backgroundImage = `url('${carData.background}')`;
+
+        // Drivers Update
+        document.getElementById('d1-num').innerText = carData.drivers.d1Num;
+        document.getElementById('d1-num').style.color = carData.drivers.d1Color;
+        document.getElementById('d1-name').innerText = carData.drivers.d1Name;
+        document.getElementById('d1-img').src = carData.drivers.d1Img;
+
+        document.getElementById('d2-num').innerText = carData.drivers.d2Num;
+        document.getElementById('d2-num').style.color = carData.drivers.d2Color;
+        document.getElementById('d2-name').innerText = carData.drivers.d2Name;
+        document.getElementById('d2-img').src = carData.drivers.d2Img;
+
+        // Standings Update
+        document.getElementById('stand-pos').innerText = carData.standings.pos;
+        document.getElementById('stand-pts').innerText = carData.standings.pts;
+        document.getElementById('stand-wins').innerText = carData.standings.wins;
+
+        // Base & Tech Specs Update
+        document.getElementById('team-flag').innerText = carData.flag;
+        document.getElementById('team-base').innerText = carData.base;
+        document.getElementById('team-engine').innerText = carData.engine;
+        document.getElementById('team-chassis').innerText = carData.modelName;
+
+        // Rank Update
+        document.getElementById('rank-start').innerText = carData.rank.start;
+        document.getElementById('rank-finish').innerText = carData.rank.finish;
+
+        // Draw Mini Charts
+        drawMiniChart('chart-start', carData.drivers.d1Color);
+        drawMiniChart('chart-finish', '#e10600');
+
+        // Load Championships
+        const champContainer = document.getElementById('champ-years');
+        champContainer.innerHTML = '';
+        if(carData.champs.length === 0) {
+            champContainer.innerHTML = '<span style="color:#666; font-size:10px;">No Recent Titles</span>';
+        } else {
+            carData.champs.forEach(year => {
+                let badge = document.createElement('div');
+                badge.className = 'champ-badge';
+                badge.innerHTML = `🛡️ ${year}`;
+                champContainer.appendChild(badge);
+            });
+        }
+
+        // Diagnostic Progress Bars
+        document.getElementById('bar-drag').style.width = carData.stats.drag + '%';
+        document.getElementById('bar-speed').style.width = carData.stats.speed + '%';
+        document.getElementById('bar-downforce').style.width = carData.stats.downforce + '%';
+
+        // Tyre Specs Update
+        document.getElementById('pressure-front').innerText = carData.tyres.pFront;
+        document.getElementById('pressure-rear').innerText = carData.tyres.pRear;
+        document.getElementById('camber-front').innerText = carData.tyres.cFront;
+        document.getElementById('camber-rear').innerText = carData.tyres.cRear;
+
+        // Carousel Highlighting
+        document.querySelectorAll('.car-card').forEach(card => card.classList.remove('active'));
+        if(cardElement) cardElement.classList.add('active');
+    }
+
+    // Auto-load Ferrari on page boot
+    window.onload = function() {
+        const defaultCard = document.querySelector('.car-card');
+        if(defaultCard) selectCar('ferrari', defaultCard);
+    };
+</script>
 </body>
 </html>
