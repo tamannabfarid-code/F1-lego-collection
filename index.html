@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lego F1 Garage</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="user-section">
+            <h2>LEGO F1 GARAGE</h2>
+            <img src="main user charactor.png" alt="User" class="char-icon">
+            <img src="ferrari charactor.png" alt="F1" class="char-icon">
+            <img src="mercedes charactor.png" alt="F1" class="char-icon">
+            <img src="hass vr-20 charactor.png" alt="F1" class="char-icon">
+        </div>
+        <div class="stats-currency">
+            <div><span style="color: #ffcc00;">39,000</span> LEGO BRICKS</div>
+            <div><span style="color: #ffcc00;">6,920</span> PREMIER SETS</div>
+        </div>
+    </div>
+
+    <div class="main-stage" id="main-stage">
+        
+        <div class="side-panel">
+            
+            <div class="sub-block team-header">
+                <img id="team-logo" src="logo ferrari.png" alt="Brand" class="team-logo">
+                <div class="team-info">
+                    <h3 id="panel-team-name">Ferrari</h3>
+                    <p id="panel-car-model">SF-24</p>
+                </div>
+            </div>
+
+            <div class="widget-title">Team Drivers</div>
+            <div class="drivers-container">
+                <div class="driver-card">
+                    <div id="d1-num" class="driver-num" style="color: #e10600;">16</div>
+                    <div id="d1-name" class="driver-name">Leclerc</div>
+                    <img id="d1-img" src="driver leclerc.png" alt="Driver" class="driver-avatar">
+                </div>
+                <div class="driver-card">
+                    <div id="d2-num" class="driver-num" style="color: #ffcc00;">55</div>
+                    <div id="d2-name" class="driver-name">Sainz</div>
+                    <img id="d2-img" src="driver sainz.png" alt="Driver" class="driver-avatar">
+                </div>
+            </div>
+
+            <div class="widget-title">Standings Info</div>
+            <div class="sub-block standings-grid">
+                <div class="standings-item">
+                    <div class="stat-label">Position</div>
+                    <div><span id="stand-pos">2</span><small style="font-size:12px; color:#aaa;">nd</small></div>
+                </div>
+                <div class="standings-item">
+                    <div class="stat-label">Total Points</div>
+                    <div><span id="stand-pts">200</span><small style="font-size:10px; color:#aaa;"> pts</small></div>
+                </div>
+                <div class="standings-item">
+                    <div class="stat-label">Wins</div>
+                    <div><span id="stand-wins" style="color: #ffcc00;">4</span></div>
+                </div>
+            </div>
+
+            <div class="sub-block base-info">
+                <div class="stat-label" style="margin-bottom: 4px;">📍 Base</div>
+                <div style="font-size: 14px; font-family: 'Arial Black', sans-serif;">
+                    <span id="team-flag">🇮🇹</span> <span id="team-base">Maranello, Italy</span>
+                </div>
+            </div>
+
+            <div class="tech-specs-grid">
+                <div class="sub-block spec-item">
+                    <div class="stat-label">Engine</div>
+                    <div id="team-engine" style="font-style: italic; font-size: 13px; margin-top: 4px;">Ferrari v6</div>
+                </div>
+                <div class="sub-block spec-item">
+                    <div class="stat-label">Chassis</div>
+                    <div id="team-chassis" style="font-style: italic; font-size: 13px; margin-top: 4px;">SF-24</div>
+                </div>
+            </div>
+
+            <div class="sub-block rank-widget">
+                <div class="widget-title" style="color: #fff; font-size: 14px;">Rank</div>
+                
+                <div class="rank-row">
+                    <div class="rank-num" id="rank-start">5.15</div>
+                    <div class="rank-text">Starting grid<br>avg</div>
+                </div>
+                <div class="mini-chart" id="chart-start"></div>
+
+                <div class="rank-row" style="margin-top: 15px;">
+                    <div class="rank-num" id="rank-finish">4.21</div>
+                    <div class="rank-text">Finish line<br>avg</div>
+                </div>
+                <div class="mini-chart" id="chart-finish"></div>
+            </div>
+
+            <div class="sub-block champ-widget">
+                <div class="stat-label">Ranked in World Championship</div>
+                <div class="champ-icons" id="champ-years">
+                    </div>
+            </div>
+
+            <div class="widget-title">Car Diagnostics</div>
+            <div class="sub-block">
+                <div class="stat-row">
+                    <div class="stat-label">Drag</div>
+                    <div class="stat-bar-container"><div id="bar-drag" class="stat-bar-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-label">Max Speed</div>
+                    <div class="stat-bar-container"><div id="bar-speed" class="stat-bar-fill"></div></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-label">Downforce</div>
+                    <div class="stat-bar-container"><div id="bar-downforce" class="stat-bar-fill"></div></div>
+                </div>
+            </div>
+
+        </div>
+
+        <model-viewer id="f1-viewer" 
+                      src="3d ferrari.glb" 
+                      camera-controls 
+                      auto-rotate 
+                      rotation-per-second="30deg"
+                      shadow-intensity="1">
+        </model-viewer>
+
+        <div class="side-panel">
+            <div class="widget-title">Current Tyre Info</div>
+            
+            <div class="sub-block tyre-compounds">
+                <div><div class="tyre-graphic hard"></div><span style="font-size:11px;">C1 HARD</span></div>
+                <div><div class="tyre-graphic medium"></div><span style="font-size:11px; color:#ffd200;">C2 MED</span></div>
+                <div><div class="tyre-graphic soft"></div><span style="font-size:11px; color:#ff0022;">C3 SOFT</span></div>
+            </div>
+
+            <div class="widget-title">Tyre Specs (Slick)</div>
+            
+            <div class="sub-block">
+                <div class="stat-label" style="margin-bottom:6px;">Min. Starting Pressures</div>
+                <div class="spec-row">
+                    <div><div id="pressure-front" class="spec-val">25.0 psi</div><div class="spec-sub">Front</div></div>
+                    <div><div id="pressure-rear" class="spec-val">23.0 psi</div><div class="spec-sub">Rear</div></div>
+                </div>
+            </div>
+
+            <div class="sub-block">
+                <div class="stat-label" style="margin-bottom:6px;">EOS Camber Limit</div>
+                <div class="spec-row">
+                    <div><div class="camber-box front"></div><div id="camber-front" class="spec-val" style="font-size:13px;">-2.75°</div><div class="spec-sub">Front</div></div>
+                    <div><div class="camber-box rear"></div><div id="camber-rear" class="spec-val" style="font-size:13px;">-1.50°</div><div class="spec-sub">Rear</div></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="carousel-container">
+        <div class="carousel-title">Giada Farid's Exclusive Lego® F1® Collection</div>
+        <div class="carousel">
+            <div class="car-card active" onclick="selectCar('ferrari', this)"><img src="ferrari car.png" alt="Ferrari"><p>Ferrari F1-75</p></div>
+            <div class="car-card" onclick="selectCar('aston', this)"><img src="aston martin car.png" alt="Aston"><p>Aston Martin</p></div>
+            <div class="car-card" onclick="selectCar('mercedes', this)"><img src="mercedes car.png" alt="Merc"><p>Mercedes-Benz</p></div>
+            <div class="car-card" onclick="selectCar('mclaren', this)"><img src="mclaren car.png" alt="Mac"><p>McLaren</p></div>
+            <div class="car-card" onclick="selectCar('haas', this)"><img src="haas vr-20.png" alt="Haas"><p>Haas VR-20</p></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
