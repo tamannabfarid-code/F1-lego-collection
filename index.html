@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lego F1 Garage - No Haas, Transparent Car Cards</title>
+    <title>Lego F1 Garage - Updated Drivers & White Text</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <style>
         /* General Layout Base */
@@ -13,6 +13,7 @@
             background: #121212;
             overflow-x: hidden;
             position: relative;
+            color: white; /* ensure base text is white */
         }
 
         /* Background overlay for smooth crossfade */
@@ -66,6 +67,7 @@
             overflow-y: auto;
             transition: opacity 0.3s ease, transform 0.2s ease;
             backdrop-filter: blur(4px);
+            color: white;
         }
 
         .side-panel::-webkit-scrollbar { width: 6px; }
@@ -76,33 +78,36 @@
             opacity: 0 !important;
         }
 
-        .widget-title { font-family: 'Arial Black', sans-serif; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+        .widget-title { font-family: 'Arial Black', sans-serif; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; color: #aaa; margin-bottom: 4px; }
         .sub-block { background-color: rgba(30, 30, 30, 0.6); border-radius: 10px; padding: 10px; border: 1px solid #333; transition: background 0.2s; }
 
         /* Team Header Widget */
         .team-header { display: flex; align-items: center; gap: 12px; }
         .team-logo { width: 35px; height: 35px; object-fit: contain; transition: opacity 0.2s; }
-        .team-info h3 { margin: 0; font-family: 'Arial Black', sans-serif; font-size: 16px; }
+        .team-info h3 { margin: 0; font-family: 'Arial Black', sans-serif; font-size: 16px; color: white; }
         .team-info p { margin: 0; font-size: 12px; color: #ffcc00; }
 
         /* Drivers Row Widget */
         .drivers-container { display: flex; gap: 10px; }
         .driver-card { flex: 1; background-color: #222; border-radius: 8px; padding: 6px; position: relative; display: flex; flex-direction: column; align-items: flex-start; border: 1px solid #333; transition: all 0.2s; }
         .driver-num { font-family: 'Arial Black', sans-serif; font-size: 20px; font-style: italic; line-height: 1; margin-bottom: 2px; }
-        .driver-name { font-size: 11px; font-weight: bold; color: #bbb; }
+        .driver-name { font-size: 11px; font-weight: bold; color: white !important; } /* force white */
         .driver-avatar { width: 45px; height: 45px; object-fit: contain; position: absolute; right: 2px; bottom: 2px; transition: opacity 0.2s; }
 
         /* Standings Widget */
         .standings-grid { display: flex; justify-content: space-between; align-items: center; text-align: center; }
-        .standings-item span { font-family: 'Arial Black', sans-serif; font-size: 24px; }
+        .standings-item span { font-family: 'Arial Black', sans-serif; font-size: 24px; color: white; }
+        .standings-item .stat-label { color: #ccc; }
 
         /* Tech & Base Specs */
         .tech-specs-grid { display: flex; gap: 10px; }
         .spec-item { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+        .spec-item .stat-label { color: #ccc; }
+        #team-engine, #team-chassis { color: white; }
 
         /* Rank & Telemetry Charts */
         .rank-row { display: flex; align-items: center; gap: 10px; }
-        .rank-num { font-size: 22px; font-family: 'Arial Black', sans-serif; }
+        .rank-num { font-size: 22px; font-family: 'Arial Black', sans-serif; color: white; }
         .rank-text { font-size: 10px; color: #aaa; line-height: 1.2; text-transform: uppercase; }
         .mini-chart { display: flex; gap: 3px; height: 25px; align-items: flex-end; margin-top: 8px; }
         .chart-bar { flex: 1; background-color: #444; border-radius: 2px 2px 0 0; transition: height 0.3s ease; }
@@ -113,7 +118,7 @@
 
         /* Performance Bar Items */
         .stat-row { margin-bottom: 6px; }
-        .stat-label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; }
+        .stat-label { font-size: 10px; text-transform: uppercase; color: #ccc; font-weight: bold; }
         .stat-bar-container { background-color: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 3px; }
         .stat-bar-fill { background: linear-gradient(90deg, #ffcc00, #e10600); height: 100%; width: 0%; transition: width 0.5s ease; }
 
@@ -133,8 +138,8 @@
         .tyre-graphic.medium { border-color: #ffd200; box-shadow: 0 0 4px #ffd200; }
         .tyre-graphic.soft { border-color: #ff0022; box-shadow: 0 0 4px #ff0022; }
         .spec-row { display: flex; justify-content: space-around; text-align: center; }
-        .spec-val { font-size: 15px; font-weight: bold; }
-        .spec-sub { font-size: 9px; color: #666; text-transform: uppercase; }
+        .spec-val { font-size: 15px; font-weight: bold; color: white; }
+        .spec-sub { font-size: 9px; color: #aaa; text-transform: uppercase; }
         .camber-box { width: 26px; height: 34px; border: 2px solid #555; margin: 0 auto 4px auto; border-radius: 3px; position: relative; }
         .camber-box::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background-color: #e10600; }
         .camber-box.front { transform: skewX(-5deg); }
@@ -150,7 +155,6 @@
         }
         .carousel-title { font-size: 13px; color: #ddd; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
         .carousel { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-        /* Removed black background and border from car cards */
         .car-card {
             background: transparent;
             border: none;
@@ -162,10 +166,7 @@
             transition: transform 0.2s;
         }
         .car-card:hover { transform: translateY(-3px); }
-        .car-card.active {
-            /* No background change, just a subtle glow or underline if desired */
-            text-shadow: 0 0 5px rgba(225,6,0,0.5);
-        }
+        .car-card.active { text-shadow: 0 0 5px rgba(225,6,0,0.5); }
         .car-card img { width: 100%; height: auto; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
         .car-card p { margin: 6px 0 0 0; font-size: 10px; font-family: 'Arial Black', sans-serif; color: white; }
     </style>
@@ -194,9 +195,9 @@
                     <img id="d1-img" src="driver leclerc.png" alt="Driver" class="driver-avatar">
                 </div>
                 <div class="driver-card">
-                    <div id="d2-num" class="driver-num" style="color: #ffcc00;">55</div>
-                    <div id="d2-name" class="driver-name">Sainz</div>
-                    <img id="d2-img" src="driver sainz.png" alt="Driver" class="driver-avatar">
+                    <div id="d2-num" class="driver-num" style="color: #ffcc00;">44</div>
+                    <div id="d2-name" class="driver-name">Hamilton</div>
+                    <img id="d2-img" src="driver hamilton.png" alt="Driver" class="driver-avatar">
                 </div>
             </div>
 
@@ -308,7 +309,7 @@
         </div>
     </div>
 
-    <!-- BOTTOM CAROUSEL - Haas removed -->
+    <!-- BOTTOM CAROUSEL - Hass removed, only 4 teams -->
     <div class="carousel-container">
         <div class="carousel-title">Giada Farid's Exclusive Lego® F1® Collection</div>
         <div class="carousel">
@@ -316,12 +317,11 @@
             <div class="car-card" data-car="aston" onclick="selectCar('aston', this)"><img src="aston martin car.png" alt="Aston"><p>Aston Martin</p></div>
             <div class="car-card" data-car="mercedes" onclick="selectCar('mercedes', this)"><img src="mercedes car.png" alt="Merc"><p>Mercedes-Benz</p></div>
             <div class="car-card" data-car="mclaren" onclick="selectCar('mclaren', this)"><img src="mclaren car.png" alt="Mac"><p>McLaren</p></div>
-            <!-- Haas card removed -->
         </div>
     </div>
 
     <script>
-        // Database with all cars except Haas (but keeping Haas data for completeness, though not used)
+        // Updated database with new driver lineups and white text ensured
         const garageDatabase = {
             ferrari: {
                 team: "Ferrari", modelName: "SF-24", logo: "logo ferrari.png", 
@@ -331,7 +331,7 @@
                 champs: ["2008", "2007", "2004", "2003", "2002", "2001", "2000", "1999"],
                 stats: { drag: 32, speed: 98, downforce: 92 },
                 standings: { pos: "2", pts: "200", wins: "4" },
-                drivers: { d1Num: "16", d1Name: "Leclerc", d1Img: "driver leclerc.png", d1Color: "#e10600", d2Num: "55", d2Name: "Sainz", d2Img: "driver sainz.png", d2Color: "#ffcc00" },
+                drivers: { d1Num: "16", d1Name: "Leclerc", d1Img: "driver leclerc.png", d1Color: "#e10600", d2Num: "44", d2Name: "Hamilton", d2Img: "driver hamilton.png", d2Color: "#ffcc00" },
                 tyres: { pFront: "25.0 psi", pRear: "23.0 psi", cFront: "-2.75°", cRear: "-1.50°" }
             },
             aston: {
@@ -353,7 +353,8 @@
                 champs: ["2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014"],
                 stats: { drag: 30, speed: 99, downforce: 95 },
                 standings: { pos: "3", pts: "175", wins: "2" },
-                drivers: { d1Num: "63", d1Name: "Russell", d1Img: "driver russell.png", d1Color: "#00d2be", d2Num: "44", d2Name: "Hamilton", d2Img: "driver hamilton.png", d2Color: "#ff007f" },
+                // Updated: Russell (63) and Antonelli (??) - using #12 as placeholder, you can change
+                drivers: { d1Num: "63", d1Name: "Russell", d1Img: "driver russell.png", d1Color: "#00d2be", d2Num: "12", d2Name: "Antonelli", d2Img: "driver antonelli.png", d2Color: "#ffffff" },
                 tyres: { pFront: "25.5 psi", pRear: "23.5 psi", cFront: "-2.50°", cRear: "-1.40°" }
             },
             mclaren: {
